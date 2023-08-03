@@ -1,0 +1,16 @@
+version: "3"
+
+services:
+  database:
+    image: postgres
+    hostname: postgres
+    restart: always
+    environment:
+      - POSTGRES_PASSWORD=password
+    ports:
+      - 5432:5432
+    volumes:
+      - papir-db:/var/lib/postgresql/data
+
+volumes:
+  papir-db:
