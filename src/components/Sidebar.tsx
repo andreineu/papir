@@ -1,7 +1,7 @@
 import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 
-import { Button } from './ui/button';
+import { Button } from './ui/Button';
 
 export const Sidebar = () => {
   const { data: session } = useSession();
