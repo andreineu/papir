@@ -1,28 +1,58 @@
-import { useSession } from 'next-auth/react';
-import Link from 'next/link';
+import { useEffect, useState } from 'react';
 
-import { Button } from '@src/ui-kit/button';
+import { api } from '@src/lib/api';
+import { useNotesStore } from '@src/lib/notes.store';
+
+import { NotePreview } from './note-preview';
 
 export const Sidebar = () => {
-  const { data: session } = useSession();
+  return (
+    <div className="fixed inset-y-0 left-0 bg-neutral-900 p-4">
+      <NoteList />
+    </div>
+  );
+};
+
+const useHydratedNoteList = () => {
+  const { data: notes } = api.note.getAll.useQuery();
+  const [hydrated, setHydrated] = useState(false);
+
+  useEffect(() => {
+    if (!hydrated && notes) {
+      useNotesStore.setState({ notes });
+      setHydrated(true);
+    }
+  }, [hydrated, notes]);
+  const store = useNotesStore();
+  return store;
+};
+
+export const NoteList = () => {
+  const store = useHydratedNoteList();
 
   return (
     <div className="fixed inset-y-0 left-0 bg-neutral-900 p-4">
-      {!session ? (
-        <Button asChild variant="default" className="text-2xl font-bold">
-          <Link href="/api/auth/signin" target="_blank">
-            <h3>Sign in</h3>
-          </Link>
-        </Button>
-      ) : (
-        <Link
-          className="flex max-w-xs flex-col gap-4 rounded-xl bg-white/10 p-4 text-white hover:bg-white/20"
-          href="/api/auth/signout"
-          target="_blank"
-        >
-          <h3 className="text-2xl font-bold">Sign out</h3>
-        </Link>
-      )}
+      {store.notes?.map((note) => (
+        <NotePreview
+          key={note.id}
+          note={note}
+          onCopyNote={() => {
+            store.addNote({
+              title: note.title + ' copy',
+              content: note.content,
+            });
+          }}
+          onDeleteNote={() => {
+            store.deleteNote({ id: note.id });
+          }}
+          onRename={(title) => {
+            store.updateNote({ id: note.id, title });
+          }}
+          onStar={() => {
+            store.updateNote({ id: note.id, starred: !note.starred });
+          }}
+        />
+      ))}
     </div>
   );
 };

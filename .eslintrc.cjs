@@ -29,6 +29,7 @@ const config = {
         argsIgnorePattern: '^_',
       },
     ],
+    '@typescript-eslint/no-floating-promises': 'off',
   },
   ignorePatterns: ['!.storybook'],
 };

@@ -9,15 +9,14 @@ import { NotePreviewContextMenuContent } from '../note-preview-context-menu';
 interface NotePreviewProps {
   note: Note;
 
-  onUpdateNote: (
-    payload: Partial<Pick<Note, 'title' | 'starred'>> & Pick<Note, 'id'>,
-  ) => void;
-  onCopyNote: (payload: Note) => void;
-  onDeleteNote: (id: string) => void;
+  onRename: (name: string) => void;
+  onCopyNote: () => void;
+  onStar: () => void;
+  onDeleteNote: () => void;
 }
 
 export const NotePreview: FC<NotePreviewProps> = (props) => {
-  const { note, onCopyNote, onDeleteNote, onUpdateNote } = props;
+  const { note, onCopyNote, onDeleteNote, onRename, onStar } = props;
 
   const [name, setName] = useState(note.title);
   const [isEditing, setIsEditing] = useState(false);
@@ -32,20 +31,20 @@ export const NotePreview: FC<NotePreviewProps> = (props) => {
   }, [isEditing]);
 
   const handleRename = () => {
-    onUpdateNote({ id: note.id, title: name });
+    onRename(name);
     setIsEditing(false);
   };
 
   const handleCopy = () => {
-    onCopyNote(note);
+    onCopyNote();
   };
 
   const handleStar = () => {
-    onUpdateNote({ id: note.id, starred: !note.starred });
+    onStar();
   };
 
   const handleDelete = () => {
-    onDeleteNote(note.id);
+    onDeleteNote();
   };
 
   return (
@@ -62,7 +61,7 @@ export const NotePreview: FC<NotePreviewProps> = (props) => {
             />
           </form>
         ) : (
-          <div className="rounded p-1 pl-8 hover:bg-neutral-700 hover:no-underline">
+          <div className="rounded p-1 hover:bg-neutral-700 hover:no-underline">
             {name}
           </div>
         )}
