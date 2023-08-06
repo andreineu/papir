@@ -25,18 +25,21 @@ const useHydratedNoteList = () => {
 export const NoteList = () => {
   const store = useHydratedNoteList();
 
+  const handleAddNote = () => {
+    store.addNote({
+      title: 'Untitled',
+      content: '',
+    });
+  };
+
   return (
     <>
       <div className="flex justify-center p-4">
         <Button
           size="icon"
           variant="ghost"
-          onClick={() => {
-            store.addNote({
-              title: 'Untitled',
-              content: '',
-            });
-          }}
+          className="dark:hover:bg-neutral-700"
+          onClick={handleAddNote}
         >
           <FilePlus2 />
         </Button>

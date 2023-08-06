@@ -55,13 +55,13 @@ export const NotePreview: FC<NotePreviewProps> = (props) => {
             <input
               ref={ref}
               onBlur={handleRename}
-              className="w-full rounded bg-inherit p-1 pl-8 hover:bg-neutral-700 hover:no-underline focus:outline-neutral-600"
+              className="w-full rounded bg-inherit px-3 py-1 hover:bg-neutral-700 hover:no-underline focus:outline-none focus:ring-2 focus:ring-neutral-300 dark:focus:ring-neutral-600"
               value={name}
               onChange={(e) => setName(e.target.value)}
             />
           </form>
         ) : (
-          <div className="rounded p-1 hover:bg-neutral-700 hover:no-underline">
+          <div className="rounded px-3 py-1 hover:bg-neutral-700 hover:no-underline">
             {name}
           </div>
         )}
