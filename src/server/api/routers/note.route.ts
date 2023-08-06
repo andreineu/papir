@@ -1,4 +1,3 @@
-import { TRPCError } from '@trpc/server';
 import sanitizeHtml from 'sanitize-html';
 import { z } from 'zod';
 
@@ -13,13 +12,7 @@ export const noteRouter = createTRPCRouter({
   create: protectedProcedure
     .input(z.object({ title: z.string(), content: z.string() }))
     .mutation(async ({ ctx, input }) => {
-      const author = await ctx.prisma.user.findUnique({
-        where: { id: ctx.session.user.id },
-      });
-
-      if (!author) {
-        throw new TRPCError({ code: 'NOT_FOUND', message: 'User not found' });
-      }
+      const author = ctx.session.user;
 
       const content = sanitizeHtml(input.content);
 
@@ -29,6 +22,31 @@ export const noteRouter = createTRPCRouter({
           content,
           author: { connect: { id: author.id } },
         },
+      });
+    }),
+  update: protectedProcedure
+    .input(
+      z.object({
+        id: z.string(),
+        content: z.string().optional(),
+        title: z.string().optional(),
+      }),
+    )
+    .mutation(({ ctx, input }) => {
+      const author = ctx.session.user;
+
+      const content = input.content ? sanitizeHtml(input.content) : undefined;
+
+      return ctx.prisma.note.update({
+        where: { id: input.id, authorId: author.id },
+        data: { ...input, content },
+      });
+    }),
+  delete: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .mutation(({ ctx, input }) => {
+      return ctx.prisma.note.delete({
+        where: { id: input.id },
       });
     }),
 });

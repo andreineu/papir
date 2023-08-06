@@ -1,4 +1,4 @@
-import { noteRouter } from '@src/server/api/routers/note';
+import { noteRouter } from '@src/server/api/routers/note.route';
 import { createTRPCRouter } from '@src/server/api/trpc';
 
 /**
