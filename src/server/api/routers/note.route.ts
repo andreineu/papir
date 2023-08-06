@@ -30,6 +30,7 @@ export const noteRouter = createTRPCRouter({
         id: z.string(),
         content: z.string().optional(),
         title: z.string().optional(),
+        starred: z.boolean().optional(),
       }),
     )
     .mutation(({ ctx, input }) => {
