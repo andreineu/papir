@@ -1,3 +1,4 @@
+import { TRPCError } from '@trpc/server';
 import sanitizeHtml from 'sanitize-html';
 import { z } from 'zod';
 
@@ -7,11 +8,29 @@ export const noteRouter = createTRPCRouter({
   getAll: protectedProcedure.query(({ ctx }) => {
     const user = ctx.session.user;
 
-    return ctx.prisma.note.findMany({ where: { authorId: user.id } });
+    return ctx.prisma.note.findMany({
+      where: { authorId: user.id },
+      orderBy: { title: 'asc' },
+    });
   }),
+  getById: protectedProcedure
+    .input(z.object({ id: z.string() }))
+    .query(async ({ ctx, input }) => {
+      const user = ctx.session.user;
+
+      const note = await ctx.prisma.note.findUnique({
+        where: { id: input.id, authorId: user.id },
+      });
+
+      if (!note) {
+        throw new TRPCError({ code: 'NOT_FOUND', message: 'Note not found' });
+      }
+
+      return note;
+    }),
   create: protectedProcedure
     .input(z.object({ title: z.string(), content: z.string() }))
-    .mutation(async ({ ctx, input }) => {
+    .mutation(({ ctx, input }) => {
       const author = ctx.session.user;
 
       const content = sanitizeHtml(input.content);

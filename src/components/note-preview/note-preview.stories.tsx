@@ -24,8 +24,9 @@ const noop = () => null;
 export const Example: Story = {
   args: {
     note: mockNote,
-    onCopyNote: noop,
-    onDeleteNote: noop,
+    onClick: noop,
+    onCopy: noop,
+    onDelete: noop,
     onRename: noop,
     onStar: noop,
   },

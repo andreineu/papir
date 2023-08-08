@@ -5,6 +5,7 @@ import { type AppType } from 'next/app';
 import { Layout } from '@src/components/layout';
 import { api } from '@src/lib/api';
 import '@src/styles/globals.css';
+import { Toaster } from '@src/ui-kit';
 
 const MyApp: AppType<{ session: Session | null }> = ({
   Component,
@@ -14,6 +15,7 @@ const MyApp: AppType<{ session: Session | null }> = ({
     <SessionProvider session={session}>
       <Layout>
         <Component {...pageProps} />
+        <Toaster />
       </Layout>
     </SessionProvider>
   );

@@ -92,7 +92,6 @@ export const TiptapExtensions = [
       if (node.type.name === 'heading') {
         return `Heading ${node.attrs.level}`;
       }
-      console.log(node);
       return "Press '/' for commands";
     },
     emptyNodeClass:

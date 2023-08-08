@@ -3,7 +3,8 @@ import { type FC, useEffect, useState } from 'react';
 import {
   EditorContent,
   type EditorEvents,
-  type JSONContent,
+  type HTMLContent,
+  generateJSON,
   useEditor,
 } from '@tiptap/react';
 
@@ -12,7 +13,7 @@ import { TiptapExtensions } from './extensions';
 import { TiptapEditorProps } from './props';
 
 interface EditorProps {
-  content?: JSONContent;
+  content: HTMLContent;
   onUpdate?: (props: EditorEvents['update']) => void;
 }
 
@@ -30,10 +31,11 @@ export const Editor: FC<EditorProps> = (props) => {
 
   useEffect(() => {
     if (content && editor && !hydrated) {
-      editor.commands.setContent(content);
+      const output = generateJSON(content, TiptapExtensions);
+      editor.commands.setContent(output);
       setHydrated(true);
     }
-  }, [editor, content, hydrated]);
+  }, [editor, hydrated, content]);
 
   return (
     <div

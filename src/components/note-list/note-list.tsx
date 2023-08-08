@@ -1,32 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
-import { FilePlus2 } from 'lucide-react';
+import { FilePlus2, Star } from 'lucide-react';
 
 import { api } from '@src/lib/api';
-import { useNotesStore } from '@src/lib/notes.store';
+import { useNoteAddMutation } from '@src/lib/hooks/note.hooks';
+import { cn } from '@src/lib/utils';
 import { Button } from '@src/ui-kit';
 
 import { NotePreview } from '../note-preview';
 
-const useHydratedNoteList = () => {
-  const { data: notes } = api.note.getAll.useQuery();
-  const [hydrated, setHydrated] = useState(false);
-
-  useEffect(() => {
-    if (!hydrated && notes) {
-      useNotesStore.setState({ notes });
-      setHydrated(true);
-    }
-  }, [hydrated, notes]);
-  const store = useNotesStore();
-  return store;
-};
-
 export const NoteList = () => {
-  const store = useHydratedNoteList();
+  const query = api.note.getAll.useQuery();
+  const [isStarredOnly, setIsStarredOnly] = useState(false);
+
+  const addMutation = useNoteAddMutation();
 
   const handleAddNote = () => {
-    store.addNote({
+    addMutation.mutate({
       title: 'Untitled',
       content: '',
     });
@@ -34,7 +24,7 @@ export const NoteList = () => {
 
   return (
     <>
-      <div className="flex justify-center p-4">
+      <div className="flex justify-center gap-4 p-4">
         <Button
           size="icon"
           variant="ghost"
@@ -43,29 +33,30 @@ export const NoteList = () => {
         >
           <FilePlus2 />
         </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          className={cn(
+            'dark:hover:bg-neutral-700',
+            isStarredOnly && 'dark:bg-neutral-700',
+          )}
+          onClick={() => setIsStarredOnly(!isStarredOnly)}
+        >
+          <Star />
+        </Button>
       </div>
       <div className="flex flex-col gap-1">
-        {store.notes?.map((note) => (
-          <NotePreview
-            key={note.id}
-            note={note}
-            onCopyNote={() => {
-              store.addNote({
-                title: note.title + ' copy',
-                content: note.content,
-              });
-            }}
-            onDeleteNote={() => {
-              store.deleteNote({ id: note.id });
-            }}
-            onRename={(title) => {
-              store.updateNote({ id: note.id, title });
-            }}
-            onStar={() => {
-              store.updateNote({ id: note.id, starred: !note.starred });
-            }}
-          />
-        ))}
+        {query.data
+          ?.sort((a, b) => a.title.localeCompare(b.title))
+          ?.filter((note) => {
+            if (isStarredOnly) {
+              return note.starred;
+            }
+            return true;
+          })
+          .map((note) => (
+            <NotePreview key={note.id} note={note} />
+          ))}
       </div>
     </>
   );

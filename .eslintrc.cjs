@@ -30,6 +30,7 @@ const config = {
       },
     ],
     '@typescript-eslint/no-floating-promises': 'off',
+    '@typescript-eslint/no-misused-promises': 'off',
   },
   ignorePatterns: ['!.storybook'],
 };
