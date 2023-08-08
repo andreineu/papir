@@ -19,6 +19,12 @@ const config = {
     defaultLocale: 'en',
   },
 
+  modularizeImports: {
+    'lucide-react': {
+      transform: 'lucide-react/icons/{{member}}',
+    },
+  },
+
   experimental: {
     outputFileTracingExcludes: {
       '*': [
