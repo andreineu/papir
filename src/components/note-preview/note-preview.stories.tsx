@@ -19,15 +19,8 @@ const mockNote = {
   updatedAt: new Date(),
 };
 
-const noop = () => null;
-
 export const Example: Story = {
   args: {
     note: mockNote,
-    onClick: noop,
-    onCopy: noop,
-    onDelete: noop,
-    onRename: noop,
-    onStar: noop,
   },
 };
