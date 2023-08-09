@@ -128,15 +128,17 @@ export const NotePreview: FC<NotePreviewProps> = (props) => {
             </div>
           )}
         </ContextMenuTrigger>
-        <NotePreviewMenu
-          onRenameClick={() => {
-            setIsEditing(true);
-          }}
-          onCopyClick={handleCopy}
-          onStarClick={handleStar}
-          onDeleteClick={handleDelete}
-          isStarred={note.starred}
-        />
+        {!isEditing && (
+          <NotePreviewMenu
+            onRenameClick={() => {
+              setIsEditing(true);
+            }}
+            onCopyClick={handleCopy}
+            onStarClick={handleStar}
+            onDeleteClick={handleDelete}
+            isStarred={note.starred}
+          />
+        )}
       </DropdownMenu>
     </ContextMenu>
   );
