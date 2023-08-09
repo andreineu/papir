@@ -1,6 +1,7 @@
 import { type Session } from 'next-auth';
 import { SessionProvider } from 'next-auth/react';
 import { type AppType } from 'next/app';
+import Head from 'next/head';
 import Script from 'next/script';
 
 import { Layout } from '@src/components/layout';
@@ -15,6 +16,10 @@ const MyApp: AppType<{ session: Session | null }> = ({
 }) => {
   return (
     <SessionProvider session={session}>
+      <Head>
+        <title>Papir</title>
+        <meta name="description" content="Simple storage for your notes" />
+      </Head>
       <Layout>
         <Component {...pageProps} />
         <Toaster />
