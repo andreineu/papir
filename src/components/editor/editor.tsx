@@ -1,4 +1,4 @@
-import { type FC, useEffect, useState } from 'react';
+import { type FC, useEffect } from 'react';
 
 import {
   EditorContent,
@@ -20,22 +20,20 @@ interface EditorProps {
 export const Editor: FC<EditorProps> = (props) => {
   const { content, onUpdate } = props;
 
-  const [hydrated, setHydrated] = useState(false);
-
   const editor = useEditor({
     extensions: TiptapExtensions,
     editorProps: TiptapEditorProps,
     onUpdate: onUpdate ?? (() => null),
     autofocus: 'end',
+    // content,
   });
 
   useEffect(() => {
-    if (content && editor && !hydrated) {
+    if (content && editor) {
       const output = generateJSON(content, TiptapExtensions);
       editor.commands.setContent(output);
-      setHydrated(true);
     }
-  }, [editor, hydrated, content]);
+  }, [editor, content]);
 
   return (
     <div
