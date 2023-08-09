@@ -1,4 +1,4 @@
-import { type FC, useEffect } from 'react';
+import { type FC, useEffect, useState } from 'react';
 
 import {
   EditorContent,
@@ -7,6 +7,7 @@ import {
   generateJSON,
   useEditor,
 } from '@tiptap/react';
+import { useRouter } from 'next/router';
 
 import { EditorBubbleMenu } from './components';
 import { TiptapExtensions } from './extensions';
@@ -19,21 +20,35 @@ interface EditorProps {
 
 export const Editor: FC<EditorProps> = (props) => {
   const { content, onUpdate } = props;
+  const [hydrated, setHydrated] = useState(false);
+  const router = useRouter();
 
   const editor = useEditor({
     extensions: TiptapExtensions,
     editorProps: TiptapEditorProps,
     onUpdate: onUpdate ?? (() => null),
     autofocus: 'end',
-    // content,
   });
 
   useEffect(() => {
-    if (content && editor) {
+    const onRouteChange = () => {
+      setHydrated(false);
+    };
+
+    router.events.on('routeChangeComplete', onRouteChange);
+
+    return () => {
+      router.events.off('routeChangeComplete', onRouteChange);
+    };
+  }, [router.events]);
+
+  useEffect(() => {
+    if (content && editor && !hydrated) {
       const output = generateJSON(content, TiptapExtensions);
       editor.commands.setContent(output);
+      setHydrated(true);
     }
-  }, [editor, content]);
+  }, [editor, content, hydrated]);
 
   return (
     <div

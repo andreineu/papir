@@ -10,40 +10,6 @@ import { useNoteUpdateMutation } from '@src/lib/hooks/note.hooks';
 import { useDebouncedCallback } from '@src/lib/use-debounced-callback';
 import { useToast } from '@src/ui-kit';
 
-const useNote = () => {
-  const router = useRouter();
-  const id = router.query.noteId as string;
-
-  const { data } = api.note.getById.useQuery({
-    id,
-  });
-
-  const { mutate } = useNoteUpdateMutation();
-
-  const updateContent = ({ editor }: { editor: EditorType }) => {
-    mutate({
-      id,
-      content: editor.getHTML(),
-    });
-  };
-
-  const updateTitle = (title: string) => {
-    mutate({
-      id,
-      title,
-    });
-  };
-
-  const handleUpdateContent = useDebouncedCallback(updateContent, 500);
-  const handleUpdateTitle = useDebouncedCallback(updateTitle, 500);
-
-  return {
-    data,
-    handleUpdateContent,
-    handleUpdateTitle,
-  };
-};
-
 const Layout = ({ children }: PropsWithChildren) => {
   return (
     <div className="mx-auto flex h-screen flex-col items-center gap-4 pt-16 md:max-w-[576px] lg:max-w-[768px] xl:max-w-[1024px]">
@@ -54,8 +20,25 @@ const Layout = ({ children }: PropsWithChildren) => {
 
 export default function Page() {
   const [title, setTitle] = useState('');
-  const { data, handleUpdateContent, handleUpdateTitle } = useNote();
   const { toast } = useToast();
+  const router = useRouter();
+  const id = router.query.noteId as string;
+
+  const { data } = api.note.getById.useQuery({
+    id,
+  });
+
+  const { mutate } = useNoteUpdateMutation();
+
+  const handleUpdateContent = useDebouncedCallback(
+    ({ editor }: { editor: EditorType }) => {
+      mutate({
+        id,
+        content: editor.getHTML(),
+      });
+    },
+    1000,
+  );
 
   useEffect(() => {
     setTitle(data?.title ?? '');
@@ -64,10 +47,14 @@ export default function Page() {
   const handleRename = () => {
     if (!title) {
       toast({ title: 'Title is required', variant: 'destructive' });
-      setTitle(data?.title ?? '');
-      return;
+      return setTitle(data?.title ?? '');
     }
-    handleUpdateTitle(title);
+    if (title !== data?.title) {
+      mutate({
+        id,
+        title,
+      });
+    }
   };
 
   if (!data) {

@@ -35,11 +35,11 @@ export const useNoteUpdateMutation = () => {
         ctx.note.getAll.setData(undefined, newNotes);
       }
 
-      return { oldNote: prevNote, oldNotes: prevNotes };
+      return { prevNote, prevNotes };
     },
     onError: (_err, variables, context) => {
-      ctx.note.getAll.setData(undefined, context?.oldNotes);
-      ctx.note.getById.setData({ id: variables.id }, context?.oldNote);
+      ctx.note.getAll.setData(undefined, context?.prevNotes);
+      ctx.note.getById.setData({ id: variables.id }, context?.prevNote);
     },
     onSettled: (data) => {
       ctx.note.getById.invalidate({ id: data?.id });
@@ -68,11 +68,11 @@ export const useNoteDeleteMutation = () => {
         ctx.note.getAll.setData(undefined, newNotes);
       }
 
-      return { oldNote: prevNote, oldNotes: prevNotes };
+      return { prevNote, prevNotes };
     },
     onError(_err, variables, context) {
-      ctx.note.getAll.setData(undefined, context?.oldNotes);
-      ctx.note.getById.setData({ id: variables.id }, context?.oldNote);
+      ctx.note.getAll.setData(undefined, context?.prevNotes);
+      ctx.note.getById.setData({ id: variables.id }, context?.prevNote);
     },
     onSettled: (data) => {
       ctx.note.getById.invalidate({ id: data?.id });
