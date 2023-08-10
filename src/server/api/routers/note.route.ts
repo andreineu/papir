@@ -1,7 +1,7 @@
 import { TRPCError } from '@trpc/server';
-import sanitizeHtml from 'sanitize-html';
 import { z } from 'zod';
 
+import { sanitize } from '@src/lib/sanitize';
 import { createTRPCRouter, protectedProcedure } from '@src/server/api/trpc';
 
 export const noteRouter = createTRPCRouter({
@@ -13,6 +13,7 @@ export const noteRouter = createTRPCRouter({
       orderBy: { title: 'asc' },
     });
   }),
+
   getById: protectedProcedure
     .input(z.object({ id: z.string() }))
     .query(async ({ ctx, input }) => {
@@ -28,12 +29,13 @@ export const noteRouter = createTRPCRouter({
 
       return note;
     }),
+
   create: protectedProcedure
     .input(z.object({ title: z.string(), content: z.string() }))
     .mutation(({ ctx, input }) => {
       const author = ctx.session.user;
 
-      const content = sanitizeHtml(input.content);
+      const content = sanitize(input.content);
 
       return ctx.prisma.note.create({
         data: {
@@ -43,6 +45,7 @@ export const noteRouter = createTRPCRouter({
         },
       });
     }),
+
   update: protectedProcedure
     .input(
       z.object({
@@ -55,13 +58,14 @@ export const noteRouter = createTRPCRouter({
     .mutation(({ ctx, input }) => {
       const author = ctx.session.user;
 
-      const content = input.content ? sanitizeHtml(input.content) : undefined;
+      const content = input.content ? sanitize(input.content) : undefined;
 
       return ctx.prisma.note.update({
         where: { id: input.id, authorId: author.id },
         data: { ...input, content },
       });
     }),
+
   delete: protectedProcedure
     .input(z.object({ id: z.string() }))
     .mutation(({ ctx, input }) => {
