@@ -43,7 +43,7 @@ export const Editor: FC<EditorProps> = (props) => {
   }, [router.events]);
 
   useEffect(() => {
-    if (content && editor && !hydrated) {
+    if (editor && !hydrated) {
       const output = generateJSON(content, TiptapExtensions);
       editor.commands.setContent(output);
       setHydrated(true);
