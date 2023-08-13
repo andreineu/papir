@@ -17,10 +17,17 @@ describe('Content Sanitization', () => {
     expect(cleanHtml).to.include('data-type');
   });
 
-  test('should not sanitize attribute data-checked on li element', () => {
-    const dirtyHtml = '<ul><li data-checked="checked">Text</li></ul>';
+  test('should not sanitize attribute data-type on li element', () => {
+    const dirtyHtml = '<ul><li data-type="taskItem">Text</li></ul>';
     const cleanHtml = sanitize(dirtyHtml);
 
-    expect(cleanHtml).to.include('data-checked');
+    expect(cleanHtml).to.include('data-type="taskItem"');
+  });
+
+  test('should not sanitize attribute data-checked on li element', () => {
+    const dirtyHtml = '<ul><li data-checked="true">Text</li></ul>';
+    const cleanHtml = sanitize(dirtyHtml);
+
+    expect(cleanHtml).to.include('data-checked="true"');
   });
 });
