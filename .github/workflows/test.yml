@@ -10,13 +10,13 @@ jobs:
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/build
-      - name: Run tests
-        run: npm test:unit
+      - name: Run unit tests
+        run: npm run test:unit
 
   integration-tests:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
       - uses: ./.github/actions/build
-      - name: Run tests
+      - name: Run integration tests
         run: npm run test:int
