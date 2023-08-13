@@ -4,7 +4,7 @@ DIR="$(cd "$(dirname "$0")" && pwd)"
 
 source $DIR/setenv.sh
 
-docker-compose up database-test -d
+docker compose up database-test -d
 
 echo '🟡 - Waiting for database to be ready...'
 
