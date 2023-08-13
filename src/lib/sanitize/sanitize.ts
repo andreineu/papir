@@ -5,7 +5,7 @@ export const sanitize = (content: string) => {
     allowedAttributes: {
       ...sanitizeHtml.defaults.allowedAttributes,
       ul: ['data-type'],
-      li: ['data-checked'],
+      li: ['data-type', 'data-checked'],
     },
   });
 };
