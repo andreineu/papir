@@ -47,6 +47,7 @@ const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     const Comp = asChild ? Slot : 'button';
     return (
       <Comp
+        data-testid="button"
         className={cn(buttonVariants({ variant, size, className }))}
         ref={ref}
         {...props}
