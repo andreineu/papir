@@ -1,5 +1,9 @@
 import { api } from '../api';
 
+export const useNotesQuery = () => {
+  return api.note.getAll.useQuery();
+};
+
 export const useNoteAddMutation = () => {
   const ctx = api.useContext();
 

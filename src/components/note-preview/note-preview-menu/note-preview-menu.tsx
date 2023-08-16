@@ -17,16 +17,15 @@ interface NotePreviewMenuProps {
 
 export const NotePreviewMenu: FC<NotePreviewMenuProps> = (props) => {
   const [isAlertDialogOpen, setIsAlertDialogOpen] = useState(false);
+
+  const open = () => {
+    setIsAlertDialogOpen(true);
+  };
+
   return (
     <>
-      <NotePreviewContextMenuContent
-        {...props}
-        onDeleteClick={() => setIsAlertDialogOpen(true)}
-      />
-      <NotePreviewDropdownMenuContent
-        {...props}
-        onDeleteClick={() => setIsAlertDialogOpen(true)}
-      />
+      <NotePreviewContextMenuContent {...props} onDeleteClick={open} />
+      <NotePreviewDropdownMenuContent {...props} onDeleteClick={open} />
       <AlertDialog open={isAlertDialogOpen} onOpenChange={setIsAlertDialogOpen}>
         <NotePreviewAlertDialog onDeleteConfirm={props.onDeleteClick} />
       </AlertDialog>
