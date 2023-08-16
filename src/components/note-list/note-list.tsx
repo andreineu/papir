@@ -1,26 +1,14 @@
-import { useState } from 'react';
-
 import { FilePlus2, Star } from 'lucide-react';
 
-import { api } from '@src/lib/api';
-import { useNoteAddMutation } from '@src/lib/hooks/note.hooks';
 import { cn } from '@src/lib/utils';
 import { Button } from '@src/ui-kit';
 
 import { NotePreview } from '../note-preview';
+import { useNoteList } from './model';
 
 export const NoteList = () => {
-  const query = api.note.getAll.useQuery();
-  const [isStarredOnly, setIsStarredOnly] = useState(false);
-
-  const addMutation = useNoteAddMutation();
-
-  const handleAddNote = () => {
-    addMutation.mutate({
-      title: 'Untitled',
-      content: '',
-    });
-  };
+  const { activateFilter, addNote, notes, deactivateFilter, filters } =
+    useNoteList();
 
   return (
     <>
@@ -29,7 +17,7 @@ export const NoteList = () => {
           size="icon"
           variant="ghost"
           className="dark:hover:bg-neutral-700"
-          onClick={handleAddNote}
+          onClick={addNote}
         >
           <FilePlus2 />
         </Button>
@@ -38,25 +26,21 @@ export const NoteList = () => {
           variant="ghost"
           className={cn(
             'dark:hover:bg-neutral-700',
-            isStarredOnly && 'dark:bg-neutral-700',
+            filters.starred && 'dark:bg-neutral-700',
           )}
-          onClick={() => setIsStarredOnly(!isStarredOnly)}
+          onClick={() =>
+            filters.starred
+              ? deactivateFilter('starred')
+              : activateFilter('starred')
+          }
         >
           <Star />
         </Button>
       </div>
       <div className="flex flex-col gap-1">
-        {query.data
-          ?.sort((a, b) => a.title.localeCompare(b.title))
-          ?.filter((note) => {
-            if (isStarredOnly) {
-              return note.starred;
-            }
-            return true;
-          })
-          .map((note) => (
-            <NotePreview key={note.id} note={note} />
-          ))}
+        {notes?.map((note) => (
+          <NotePreview key={note.id} note={note} />
+        ))}
       </div>
     </>
   );
