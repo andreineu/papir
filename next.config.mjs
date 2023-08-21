@@ -8,6 +8,16 @@ await import('./src/env.mjs');
 const config = {
   reactStrictMode: true,
 
+  // eslint-disable-next-line @typescript-eslint/require-await
+  async redirects() {
+    return [
+      {
+        source: '/notes',
+        destination: '/',
+        permanent: true,
+      },
+    ];
+  },
   /**
    * If you have `experimental: { appDir: true }` set, then you must comment the below `i18n` config
    * out.
