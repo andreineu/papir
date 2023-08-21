@@ -72,7 +72,7 @@ export const NotePreviewNameField: FC<NotePreviewNameFieldProps> = (props) => {
       )}
     >
       <input
-        className="w-full bg-inherit px-3 py-1 focus:outline-none"
+        className="pointer-events-none w-full bg-inherit px-3 py-1 focus:outline-none"
         disabled={!editing}
         ref={ref}
         value={name}
