@@ -12,7 +12,10 @@ export default defineConfig(() => {
       exclude: ['test/trpc/*.test.ts'],
       include: ['src/**/*.test.ts', 'src/**/*.test.tsx'],
       environment: 'jsdom',
-      setupFiles: ['./src/lib/testing/setup-rtl.ts'],
+      setupFiles: [
+        './src/lib/testing/setup-rtl.ts',
+        './src/lib/testing/setup-router.ts',
+      ],
     },
     resolve: {
       alias: [{ find: '@src', replacement: resolve(__dirname, './src') }],
