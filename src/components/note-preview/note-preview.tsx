@@ -1,8 +1,15 @@
 import React, { type FC, useState } from 'react';
 
 import { type Note } from '@prisma/client';
+import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 
-import { ContextMenu, ContextMenuTrigger, DropdownMenu } from '@src/ui-kit';
+import {
+  Button,
+  ContextMenu,
+  ContextMenuTrigger,
+  DropdownMenu,
+  DropdownMenuTrigger,
+} from '@src/ui-kit';
 
 import { useNotePreview } from './model';
 import { NotePreviewMenu } from './note-preview-menu';
@@ -29,7 +36,15 @@ export const NotePreview: FC<NotePreviewProps> = (props) => {
             onEditingChange={setIsEditing}
             editing={isEditing}
             note={note}
-          />
+          >
+            <NotePreviewNameField.Actions>
+              <DropdownMenuTrigger asChild>
+                <Button className="h-6 w-6" variant="ghost" size="icon">
+                  <DotsHorizontalIcon />
+                </Button>
+              </DropdownMenuTrigger>
+            </NotePreviewNameField.Actions>
+          </NotePreviewNameField>
         </ContextMenuTrigger>
         <NotePreviewMenu
           onRenameClick={() => {
