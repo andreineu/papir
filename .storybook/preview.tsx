@@ -5,6 +5,7 @@ import '../src/styles/globals.css';
 
 const preview: Preview = {
   parameters: {
+    layout: 'fullscreen',
     actions: { argTypesRegex: '^on[A-Z].*' },
     controls: {
       matchers: {
@@ -18,10 +19,15 @@ const preview: Preview = {
     withThemeByClassName({
       themes: {
         light: 'light',
-        dark: 'dark bg-neutral-800 text-white',
+        dark: 'dark',
       },
       defaultTheme: 'dark',
     }),
+    (Story) => (
+      <div className="min-h-screen p-4 dark:bg-neutral-900 dark:text-white">
+        <Story />
+      </div>
+    ),
   ],
 };
 
