@@ -28,7 +28,9 @@
     "**/*.ts",
     "**/*.tsx",
     "**/*.cjs",
-    "**/*.mjs"
+    "**/*.mjs",
+    ".storybook/preview.tsx",
+    ".storybook/theme.tsx"
   ],
   "exclude": ["node_modules"]
 }
