@@ -1,29 +1,32 @@
-import {
+import React, {
   type FC,
   type FocusEvent,
   type KeyboardEvent,
+  type PropsWithChildren,
   useEffect,
   useRef,
   useState,
 } from 'react';
 
 import { type Note } from '@prisma/client';
-import { DropdownMenuTrigger } from '@radix-ui/react-dropdown-menu';
-import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 import { useRouter } from 'next/router';
 
 import { cn } from '@src/lib/utils';
-import { Button } from '@src/ui-kit';
 
-interface NotePreviewNameFieldProps {
+export interface NotePreviewNameFieldProps {
   note: Note;
   editing: boolean;
   onRename: (name: string) => void;
   onEditingChange: (active: boolean) => void;
+  children?: React.ReactNode;
 }
 
-export const NotePreviewNameField: FC<NotePreviewNameFieldProps> = (props) => {
-  const { note, editing, onRename, onEditingChange } = props;
+type NotePreviewNameFieldComponent = FC<NotePreviewNameFieldProps> & {
+  Actions: typeof NotePreviewNameFieldActions;
+};
+
+export const NotePreviewNameField: NotePreviewNameFieldComponent = (props) => {
+  const { note, editing, onRename, onEditingChange, children } = props;
 
   const ref = useRef<HTMLInputElement>(null);
   const [name, setName] = useState(note.title);
@@ -81,15 +84,17 @@ export const NotePreviewNameField: FC<NotePreviewNameFieldProps> = (props) => {
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
       />
-      <DropdownMenuTrigger asChild>
-        <Button
-          variant="ghost"
-          size="icon"
-          className="invisible absolute right-1 top-1/2 h-6 w-6 -translate-y-1/2 transform group-hover:visible"
-        >
-          <DotsHorizontalIcon />
-        </Button>
-      </DropdownMenuTrigger>
+      {children}
     </div>
   );
 };
+
+const NotePreviewNameFieldActions: FC<PropsWithChildren> = ({ children }) => {
+  return (
+    <div className="invisible absolute right-1 top-1/2 -translate-y-1/2 transform group-hover:visible">
+      {children}
+    </div>
+  );
+};
+
+NotePreviewNameField.Actions = NotePreviewNameFieldActions;
