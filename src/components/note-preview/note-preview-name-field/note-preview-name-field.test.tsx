@@ -15,8 +15,8 @@ const renderSUT = (props: Partial<NotePreviewNameFieldProps> = {}) => {
     title: 'Test note',
     content: '',
     starred: false,
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    createdAt: new Date().getTime(),
+    updatedAt: new Date().getTime(),
   };
 
   const onRenameMock = vi.fn();

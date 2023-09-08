@@ -1,14 +1,19 @@
 import { useRouter } from 'next/router';
 
-import { useNoteAddMutation } from '@src/lib/hooks/note.hooks';
+import { useNotesStore } from '@src/lib/store/note.store';
 import { Button } from '@src/ui-kit';
 
 export default function Home() {
   const router = useRouter();
 
-  const { mutateAsync } = useNoteAddMutation();
+  const [addNote] = useNotesStore((store) => [store.addNote]);
+
   const handleCreateNote = async () => {
-    const newNote = await mutateAsync({ title: 'Untitled', content: '' });
+    const newNote = await addNote({
+      title: 'Untitled',
+      content: '',
+      starred: false,
+    });
     router.push(`/notes/${newNote.id}`);
   };
 

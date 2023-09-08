@@ -1,6 +1,6 @@
 import React, { type FC } from 'react';
 
-import { type Note } from '@prisma/client';
+import { type Note } from '@src/lib/api/notes';
 
 import { useNotePreview } from './model';
 import { NotePreviewShell } from './note-preview-shell/note-preview-shell';

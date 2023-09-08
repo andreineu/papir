@@ -1,21 +1,15 @@
-import { type Session } from 'next-auth';
-import { SessionProvider } from 'next-auth/react';
 import { type AppType } from 'next/app';
 import Head from 'next/head';
 import Script from 'next/script';
 
 import { Layout } from '@src/components/layout';
 import { env } from '@src/env.mjs';
-import { api } from '@src/lib/api';
 import '@src/styles/globals.css';
 import { Toaster } from '@src/ui-kit';
 
-const MyApp: AppType<{ session: Session | null }> = ({
-  Component,
-  pageProps: { session, ...pageProps },
-}) => {
+const MyApp: AppType = ({ Component, pageProps }) => {
   return (
-    <SessionProvider session={session}>
+    <>
       <Head>
         <title>Papir</title>
         <meta name="description" content="Simple storage for your notes" />
@@ -31,8 +25,8 @@ const MyApp: AppType<{ session: Session | null }> = ({
           data-website-id={env.NEXT_PUBLIC_UMAMI_SITE_ID}
         />
       )}
-    </SessionProvider>
+    </>
   );
 };
 
-export default api.withTRPC(MyApp);
+export default MyApp;

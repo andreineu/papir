@@ -7,8 +7,7 @@ import { NotePreview } from '../note-preview';
 import { useNoteList } from './model';
 
 export const NoteList = () => {
-  const { activateFilter, addNote, notes, deactivateFilter, filters } =
-    useNoteList();
+  const { toggleFilter, addNote, notes, filters } = useNoteList();
 
   return (
     <>
@@ -28,11 +27,7 @@ export const NoteList = () => {
             'dark:hover:bg-neutral-700',
             filters.starred && 'dark:bg-neutral-700',
           )}
-          onClick={() =>
-            filters.starred
-              ? deactivateFilter('starred')
-              : activateFilter('starred')
-          }
+          onClick={() => toggleFilter('starred')}
         >
           <Star />
         </Button>

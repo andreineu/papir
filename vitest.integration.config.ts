@@ -9,7 +9,6 @@ export default defineConfig(() => {
     test: {
       include: ['test/trpc/*.test.ts'],
       threads: false,
-      setupFiles: ['src/lib/testing/setup-prisma.ts'],
     },
     resolve: {
       alias: [{ find: '@src', replacement: resolve(__dirname, './src') }],
