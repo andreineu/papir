@@ -1,36 +1,53 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { api } from '@src/lib/api';
-import { useNoteAddMutation } from '@src/lib/hooks/note.hooks';
+import { type Note } from '@src/lib/api/notes';
+import { useNotesStore } from '@src/lib/store/note.store';
 
 type Filter = 'starred';
 
 export const useNoteList = () => {
-  const query = api.note.getAll.useQuery();
+  const [notes, createNote, getNotes] = useNotesStore((store) => [
+    store.notes,
+    store.addNote,
+    store.getNotes,
+  ]);
+
+  const [filteredNotes, setFilteredNotes] = useState<Note[]>();
+
   const [filters, setFilters] = useState<Record<Filter, boolean>>({
     starred: false,
   });
 
-  const addMutation = useNoteAddMutation();
+  useEffect(() => {
+    getNotes();
+  }, [getNotes]);
+
+  useEffect(() => {
+    setFilteredNotes(
+      notes
+        ?.filter((note) => (filters.starred ? note.starred : true))
+        ?.sort((a, b) => a.title.localeCompare(b.title)),
+    );
+  }, [notes, filters]);
+
+  const toggleFilter = (filter: Filter) => {
+    setFilters({ ...filters, [filter]: !filters[filter] });
+  };
 
   const addNote = () => {
-    addMutation.mutate({
+    const note = {
       title: 'Untitled',
       content: '',
-    });
+      starred: false,
+    };
+
+    createNote(note);
   };
 
-  const activateFilter = (filter: Filter) => {
-    setFilters({ ...filters, [filter]: true });
+  return {
+    notes: filteredNotes,
+    filters,
+    addNote,
+    toggleFilter,
   };
-
-  const deactivateFilter = (filter: Filter) => {
-    setFilters({ ...filters, [filter]: false });
-  };
-
-  const notes = query.data
-    ?.filter((note) => (filters.starred ? note.starred : true))
-    ?.sort((a, b) => a.title.localeCompare(b.title));
-
-  return { notes, activateFilter, deactivateFilter, filters, addNote };
 };

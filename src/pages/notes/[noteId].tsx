@@ -1,60 +1,70 @@
 import { useEffect, useState } from 'react';
 
 import { type Editor as EditorType } from '@tiptap/core';
-import { FileX } from 'lucide-react';
 import { useRouter } from 'next/router';
 
 import { Editor } from '@src/components/editor';
-import { api } from '@src/lib/api';
-import { useNoteUpdateMutation } from '@src/lib/hooks/note.hooks';
+import { type Note } from '@src/lib/api/notes';
+import { useNotesStore } from '@src/lib/store/note.store';
 import { useDebouncedCallback } from '@src/lib/use-debounced-callback';
 import { useToast } from '@src/ui-kit';
 
 export default function Page() {
   const [title, setTitle] = useState('');
   const { toast } = useToast();
+  const [note, setNote] = useState<Note>();
+  const [isEditorReady, setIsEditorReady] = useState(false);
+
   const router = useRouter();
   const id = router.query.noteId as string;
 
-  const { data } = api.note.getById.useQuery({
-    id,
-  });
+  const [notes, notesLoaded, updateNote] = useNotesStore((store) => [
+    store.notes,
+    store.notesLoaded,
+    store.updateNote,
+  ]);
 
-  const { mutate } = useNoteUpdateMutation();
+  useEffect(() => {
+    if (!id || !notesLoaded) {
+      return;
+    }
+
+    setIsEditorReady(false);
+
+    const _note = notes.find((note) => note.id === id);
+
+    if (!_note) {
+      router.push('/notes/404');
+      return;
+    }
+
+    setNote(_note);
+    setTitle(_note.title);
+    setIsEditorReady(true);
+  }, [id, notesLoaded, notes, router]);
 
   const handleUpdateContent = useDebouncedCallback(
     ({ editor }: { editor: EditorType }) => {
-      mutate({
-        id,
+      updateNote(id, {
         content: editor.getHTML(),
       });
     },
-    1000,
+    300,
   );
-
-  useEffect(() => {
-    setTitle(data?.title ?? '');
-  }, [data?.title]);
 
   const handleRename = () => {
     if (!title) {
       toast({ title: 'Title is required', variant: 'destructive' });
-      return setTitle(data?.title ?? '');
+      return setTitle(note?.title ?? '');
     }
-    if (title !== data?.title) {
-      mutate({
-        id,
-        title,
-      });
-    }
+
+    updateNote(id, {
+      title,
+    });
   };
 
-  if (!data) {
-    return (
-      <div className="flex items-center justify-center gap-4 text-5xl text-neutral-200  ">
-        <FileX size="64" /> <span>Not found</span>
-      </div>
-    );
+  if (!note) {
+    return null;
   }
 
   return (
@@ -74,7 +84,9 @@ export default function Page() {
         }}
         onBlur={handleRename}
       />
-      <Editor onUpdate={handleUpdateContent} content={data.content} />
+      {isEditorReady && (
+        <Editor onUpdate={handleUpdateContent} content={note.content} />
+      )}
     </form>
   );
 }

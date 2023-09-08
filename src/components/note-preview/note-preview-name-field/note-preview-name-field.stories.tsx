@@ -19,8 +19,8 @@ const mockNote = {
   title: 'Test',
   content: '',
   starred: false,
-  createdAt: new Date(),
-  updatedAt: new Date(),
+  createdAt: new Date().getTime(),
+  updatedAt: new Date().getTime(),
 };
 
 export const Example: Story = {

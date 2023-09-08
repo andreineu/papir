@@ -8,9 +8,9 @@ import React, {
   useState,
 } from 'react';
 
-import { type Note } from '@prisma/client';
 import { useRouter } from 'next/router';
 
+import { type Note } from '@src/lib/api/notes';
 import { cn } from '@src/lib/utils';
 
 export interface NotePreviewNameFieldProps {

@@ -1,39 +1,33 @@
-import { type Note } from '@prisma/client';
 import { useRouter } from 'next/router';
 
-import { api } from '@src/lib/api';
-import {
-  useNoteAddMutation,
-  useNoteDeleteMutation,
-  useNoteUpdateMutation,
-} from '@src/lib/hooks/note.hooks';
+import { type Note } from '@src/lib/api/notes';
+import { useNotesStore } from '@src/lib/store/note.store';
 
 export const useNotePreview = (note: Note) => {
   const router = useRouter();
 
-  const ctx = api.useContext();
-  const addMutation = useNoteAddMutation();
-  const deleteMutation = useNoteDeleteMutation();
-  const updateMutation = useNoteUpdateMutation();
+  const [deleteNote, addNote, updateNote] = useNotesStore((state) => [
+    state.deleteNote,
+    state.addNote,
+    state.updateNote,
+  ]);
 
   const isActive = router.asPath === '/notes/' + note.id;
 
   const handleClick = () => {
     router.push('/notes/' + note.id);
-    ctx.note.getById.setData({ id: note.id }, note);
   };
 
   const handleCopy = () => {
-    addMutation.mutate({
+    addNote({
       title: note.title + ' copy',
       content: note.content,
+      starred: note.starred,
     });
   };
 
   const handleDelete = () => {
-    deleteMutation.mutate({
-      id: note.id,
-    });
+    deleteNote(note.id);
 
     if (router.asPath === '/notes' + note.id) {
       router.push('/');
@@ -41,16 +35,14 @@ export const useNotePreview = (note: Note) => {
   };
 
   const handleStar = () => {
-    updateMutation.mutate({
-      id: note.id,
+    updateNote(note.id, {
       starred: !note.starred,
     });
   };
 
-  const handleRename = (name: string) => {
-    updateMutation.mutate({
-      id: note.id,
-      title: name,
+  const handleRename = (title: string) => {
+    updateNote(note.id, {
+      title,
     });
   };
 

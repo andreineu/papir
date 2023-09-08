@@ -1,8 +1,8 @@
 import React, { type FC, useState } from 'react';
 
-import { type Note } from '@prisma/client';
 import { DotsHorizontalIcon } from '@radix-ui/react-icons';
 
+import { type Note } from '@src/lib/api/notes';
 import {
   Button,
   ContextMenu,
