@@ -3,9 +3,12 @@ import { create } from 'zustand';
 import { noteApi } from '../api';
 import { type Note, type NotePayload } from '../api/notes';
 
+type Filter = 'starred';
+
 interface NotesState {
   notes: Note[];
   notesLoaded: boolean;
+  filters: Record<Filter, boolean>;
 }
 
 interface NotesActions {
@@ -13,11 +16,14 @@ interface NotesActions {
   updateNote: (id: string, updatedNote: Partial<Note>) => void;
   deleteNote: (id: string) => void;
   getNotes: () => Promise<Note[]>;
+
+  toggleFilter: (filter: Filter) => void;
 }
 
 export const useNotesStore = create<NotesState & NotesActions>((set) => ({
   notes: [],
   notesLoaded: false,
+  filters: { starred: false },
 
   getNotes: async () => {
     const notes = await noteApi.getNotes();
@@ -43,5 +49,11 @@ export const useNotesStore = create<NotesState & NotesActions>((set) => ({
   deleteNote: (id) => {
     noteApi.deleteNoteById(id);
     set((state) => ({ notes: state.notes.filter((note) => note.id !== id) }));
+  },
+
+  toggleFilter: (filter) => {
+    set((state) => ({
+      filters: { ...state.filters, [filter]: !state.filters[filter] },
+    }));
   },
 }));
