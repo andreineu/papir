@@ -1,53 +1,23 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 
-import { type Note } from '@src/lib/api/notes';
 import { useNotesStore } from '@src/lib/store/note.store';
 
-type Filter = 'starred';
-
 export const useNoteList = () => {
-  const [notes, createNote, getNotes] = useNotesStore((store) => [
+  const [notes, filters, getNotes] = useNotesStore((store) => [
     store.notes,
-    store.addNote,
+    store.filters,
     store.getNotes,
   ]);
 
-  const [filteredNotes, setFilteredNotes] = useState<Note[]>();
-
-  const [filters, setFilters] = useState<Record<Filter, boolean>>({
-    starred: false,
-  });
+  const filteredNotes = useMemo(() => {
+    return notes.filter((note) => (filters.starred ? note.starred : true));
+  }, [notes, filters]);
 
   useEffect(() => {
     getNotes();
   }, [getNotes]);
 
-  useEffect(() => {
-    setFilteredNotes(
-      notes
-        ?.filter((note) => (filters.starred ? note.starred : true))
-        ?.sort((a, b) => a.title.localeCompare(b.title)),
-    );
-  }, [notes, filters]);
-
-  const toggleFilter = (filter: Filter) => {
-    setFilters({ ...filters, [filter]: !filters[filter] });
-  };
-
-  const addNote = () => {
-    const note = {
-      title: 'Untitled',
-      content: '',
-      starred: false,
-    };
-
-    createNote(note);
-  };
-
   return {
     notes: filteredNotes,
-    filters,
-    addNote,
-    toggleFilter,
   };
 };

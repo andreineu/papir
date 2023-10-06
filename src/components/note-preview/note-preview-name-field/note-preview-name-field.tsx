@@ -75,7 +75,7 @@ export const NotePreviewNameField: NotePreviewNameFieldComponent = (props) => {
       )}
     >
       <input
-        className="pointer-events-none w-full bg-inherit px-3 py-1 focus:outline-none"
+        className="pointer-events-none w-full bg-inherit px-3 py-2 focus:outline-none"
         disabled={!editing}
         ref={ref}
         value={name}
@@ -91,7 +91,7 @@ export const NotePreviewNameField: NotePreviewNameFieldComponent = (props) => {
 
 const NotePreviewNameFieldActions: FC<PropsWithChildren> = ({ children }) => {
   return (
-    <div className="invisible absolute right-1 top-1/2 -translate-y-1/2 transform group-hover:visible">
+    <div className="invisible absolute right-1 top-1/2 -translate-y-1/2 transform rounded bg-neutral-800/75 group-hover:visible">
       {children}
     </div>
   );
